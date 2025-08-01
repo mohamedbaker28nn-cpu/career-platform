@@ -385,26 +385,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Trusted Partners Section - Mobile Optimized */}
-      <section className="bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-          <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-8 sm:mb-12">
-              Trusted{" "}
-              <span className="bg-brand-gradient bg-clip-text text-transparent">Partners</span>
-            </h2>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-8 lg:gap-16">
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                Cloude
-              </div>
-              <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                AWS
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section - Enhanced Mobile Design */}
       <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
