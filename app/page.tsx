@@ -467,8 +467,10 @@ export default function HomePage() {
                     Personality Quiz
                   </Link>
                 </li>
-                <li className="hover:text-white transition-colors cursor-pointer text-sm sm:text-base">
-                  Learning Paths
+                <li className="hover:text-white transition-colors cursor-pointer">
+                  <Link href="/learning-roadmap" className="text-sm sm:text-base">
+                    Learning Roadmap
+                  </Link>
                 </li>
                 <li className="hover:text-white transition-colors cursor-pointer">
                   <Link href="/introductory-sessions" className="text-sm sm:text-base">
