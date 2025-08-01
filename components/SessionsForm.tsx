@@ -25,7 +25,7 @@ export default function SessionsForm({ isOpen, onClose, onComplete }: SessionsFo
 
     // Set up Tally configuration for the sessions form
     window.TallyConfig = {
-      formId: "3E72z4",
+      formId: "wbQbO1",
       popup: {
         emoji: {
           text: "👋",
@@ -63,7 +63,7 @@ export default function SessionsForm({ isOpen, onClose, onComplete }: SessionsFo
         console.log('🚀 Opening Tally sessions popup')
         setLoadingMessage('Opening form...')
         
-        window.Tally.openPopup('3E72z4')
+        window.Tally.openPopup('wbQbO1')
         hasTriggeredRef.current = true
         
         // Hide loading when form is ready
@@ -109,7 +109,7 @@ export default function SessionsForm({ isOpen, onClose, onComplete }: SessionsFo
       // Close popup if it's open
       if (window.Tally) {
         try {
-          window.Tally.closePopup('3E72z4')
+          window.Tally.closePopup('wbQbO1')
         } catch (error) {
           console.log('Popup already closed')
         }

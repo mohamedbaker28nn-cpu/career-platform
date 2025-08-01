@@ -83,7 +83,7 @@ export default function TestSessionsPage() {
   const testTallyPopup = () => {
     // Set up Tally configuration
     window.TallyConfig = {
-      formId: "3E72z4",
+      formId: "wbQbO1",
       popup: {
         emoji: {
           text: "👋",
@@ -97,7 +97,7 @@ export default function TestSessionsPage() {
     setTimeout(() => {
       if (window.Tally) {
         console.log('🚀 Opening test sessions popup')
-        window.Tally.openPopup('3E72z4')
+        window.Tally.openPopup('wbQbO1')
         setStatus('🚀 Sessions popup triggered')
         
         // Additional centering logic after popup opens

@@ -133,7 +133,7 @@ export default function WaitlistPage() {
         <div className="w-full" style={{ minHeight: '800px' }}>
           <iframe 
             ref={iframeRef}
-            data-tally-src="https://tally.so/embed/wz59lM?hideTitle=1&transparentBackground=1&dynamicHeight=1&layout=card&width=100" 
+            data-tally-src="https://tally.so/embed/mRyEL4?hideTitle=1&transparentBackground=1&dynamicHeight=1&layout=card&width=100" 
             loading="lazy" 
             width="100%" 
             height="1020" 

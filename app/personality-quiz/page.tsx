@@ -381,7 +381,7 @@ export default function PersonalityQuizPage() {
       }
       
       // Open popup with specific configuration (not global)
-      (window as any).Tally.openPopup('3E72z4', {
+      (window as any).Tally.openPopup('wbQbO1', {
         layout: 'modal',
         width: 600,
         height: 600,
