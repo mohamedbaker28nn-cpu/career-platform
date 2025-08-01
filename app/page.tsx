@@ -209,10 +209,6 @@ export default function HomePage() {
                 </Button>
               </div>
               
-              {/* Additional info */}
-              <p className="text-base sm:text-lg text-gray-500 mt-6 sm:mt-8 font-medium">
-                Take it in just 3 minutes
-              </p>
             </div>
           </div>
         </div>
