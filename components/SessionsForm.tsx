@@ -1,0 +1,182 @@
+// Component for Tally sessions form popup that appears for first-time users
+"use client"
+
+import { useEffect, useRef, useState } from 'react'
+
+interface SessionsFormProps {
+  isOpen: boolean
+  onClose: () => void
+  onComplete: () => void
+}
+
+export default function SessionsForm({ isOpen, onClose, onComplete }: SessionsFormProps) {
+  const hasTriggeredRef = useRef(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState('Loading form...')
+
+  useEffect(() => {
+    if (!isOpen || hasTriggeredRef.current) return
+
+    console.log('🎯 Triggering sessions form popup')
+    
+    // Show loading state immediately
+    setIsLoading(true)
+    setLoadingMessage('Preparing your session form...')
+
+    // Set up Tally configuration for the sessions form
+    window.TallyConfig = {
+      formId: "3E72z4",
+      popup: {
+        emoji: {
+          text: "👋",
+          animation: "wave"
+        },
+        layout: "modal"
+      }
+    }
+
+    // Listen for form events
+    const handleFormSubmitted = (event: CustomEvent) => {
+      console.log('✅ Sessions form submitted:', event.detail)
+      setIsLoading(false)
+      onComplete()
+    }
+
+    const handleFormClosed = () => {
+      console.log('❌ Sessions form closed')
+      setIsLoading(false)
+      onClose()
+    }
+
+    // Add event listeners
+    window.addEventListener('TallyFormSubmitted', handleFormSubmitted as EventListener)
+    window.addEventListener('TallyFormClosed', handleFormClosed)
+
+    // Update loading message
+    setTimeout(() => {
+      setLoadingMessage('Loading expert sessions form...')
+    }, 300)
+
+    // Trigger the popup
+    setTimeout(() => {
+      if (window.Tally) {
+        console.log('🚀 Opening Tally sessions popup')
+        setLoadingMessage('Opening form...')
+        
+        window.Tally.openPopup('3E72z4')
+        hasTriggeredRef.current = true
+        
+        // Hide loading when form is ready
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 800)
+        
+        // Additional centering logic after popup opens
+        setTimeout(() => {
+          const tallyPopup = document.querySelector('#tally-open-popup') || 
+                           document.querySelector('[data-tally-popup]') ||
+                           document.querySelector('iframe[src*="tally.so"]')
+          
+          if (tallyPopup) {
+            console.log('🎯 Applying centering and sizing styles to sessions popup')
+            const popupElement = tallyPopup as HTMLElement
+            popupElement.style.position = 'fixed'
+            popupElement.style.top = '50%'
+            popupElement.style.left = '50%'
+            popupElement.style.transform = 'translate(-50%, -50%)'
+            popupElement.style.zIndex = '9999'
+            popupElement.style.maxHeight = '85vh'
+            popupElement.style.maxWidth = '350px'
+            popupElement.style.width = '80%'
+            popupElement.style.minWidth = '300px'
+            
+            // Add a class to identify this as sessions form
+            popupElement.classList.add('sessions-form-popup')
+          }
+        }, 100)
+      } else {
+        console.error('❌ Tally is not loaded')
+        setIsLoading(false)
+        setLoadingMessage('Failed to load form')
+      }
+    }, 500)
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('TallyFormSubmitted', handleFormSubmitted as EventListener)
+      window.removeEventListener('TallyFormClosed', handleFormClosed)
+      
+      // Close popup if it's open
+      if (window.Tally) {
+        try {
+          window.Tally.closePopup('3E72z4')
+        } catch (error) {
+          console.log('Popup already closed')
+        }
+      }
+    }
+  }, [isOpen, onClose, onComplete])
+
+  // Reset the trigger when form is closed
+  useEffect(() => {
+    if (!isOpen) {
+      hasTriggeredRef.current = false
+      setIsLoading(false)
+    }
+  }, [isOpen])
+
+  // Render loading overlay when form is loading
+  if (isLoading && isOpen) {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10000] flex items-center justify-center">
+        <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl border">
+          <div className="relative">
+            {/* Animated loading spinner */}
+            <div className="w-16 h-16 mx-auto mb-4 relative">
+              <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-blue-400 rounded-full animate-ping"></div>
+            </div>
+            
+            {/* Loading message */}
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Expert Sessions
+            </h3>
+            <p className="text-gray-600 text-sm">
+              {loadingMessage}
+            </p>
+            
+            {/* Animated dots */}
+            <div className="flex justify-center mt-4 space-x-1">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // This component doesn't render anything visible when not loading - the popup is handled by Tally
+  return null
+}
+
+// Extend window interface for TypeScript
+declare global {
+  interface Window {
+    TallyConfig?: {
+      formId: string
+      popup: {
+        emoji: {
+          text: string
+          animation: string
+        }
+        layout: string
+      }
+    }
+    Tally?: {
+      openPopup: (formId: string) => void
+      closePopup: (formId: string) => void
+    }
+  }
+}

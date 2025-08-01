@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Protection System Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        button { 
+            background: #4CAF50; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            margin: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        button:hover { 
+            background: #45a049; 
+            transform: translateY(-2px);
+        }
+        .danger { background: #f44336; }
+        .danger:hover { background: #da190b; }
+        .info { background: #2196F3; }
+        .info:hover { background: #0b7dda; }
+        .test-result {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+        }
+        h1 { color: #fff; text-align: center; margin-bottom: 30px; }
+        h2 { color: #fff; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Protection System Test Console</h1>
+        
+        <h2>🔍 Current Status</h2>
+        <button class="info" onclick="checkStatus()">Check Current Cookie Status</button>
+        <div id="status-result" class="test-result" style="display:none;"></div>
+        
+        <h2>🧪 Test Actions</h2>
+        <button onclick="simulateCompletion()">✅ Simulate Form Completion</button>
+        <button class="danger" onclick="clearCompletion()">🗑️ Clear Form Completion</button>
+        <button class="info" onclick="testDirectAccess()">🔗 Test Direct Access to Sessions</button>
+        
+        <h2>🚀 Full Test Sequence</h2>
+        <button onclick="runFullTest()" style="background: #FF9800;">🔄 Run Complete Protection Test</button>
+        
+        <div id="test-results" class="test-result" style="display:none;">
+            <h3>Test Results:</h3>
+            <div id="results-content"></div>
+        </div>
+        
+        <h2>📊 Live Console Output</h2>
+        <div id="console-output" style="background: #000; color: #0f0; padding: 15px; border-radius: 5px; height: 200px; overflow-y: auto; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script>
+        // Intercept console.log to show in our custom console
+        const originalLog = console.log;
+        const consoleOutput = document.getElementById('console-output');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const logEntry = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            consoleOutput.innerHTML += logEntry + '\\n';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        };
+
+        // Cookie utility functions (matching the app)
+        function getCookie(name) {
+            const value = \`; \${document.cookie}\`;
+            const parts = value.split(\`; \${name}=\`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        function setCookie(name, value, days = 365) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+            const cookieString = \`\${name}=\${value}; expires=\${expires.toUTCString()}; path=/; SameSite=Lax\`;
+            document.cookie = cookieString;
+            console.log(\`🍪 setCookie(\${name}, \${value}): \${cookieString}\`);
+        }
+
+        function deleteCookie(name) {
+            const expiredCookie = \`\${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Lax\`;
+            document.cookie = expiredCookie;
+            console.log(\`🗑️ deleteCookie(\${name}): \${expiredCookie}\`);
+        }
+
+        // Test functions
+        function checkStatus() {
+            const status = getCookie('tally_form_completed');
+            const statusDiv = document.getElementById('status-result');
+            const isCompleted = status === 'true';
+            
+            statusDiv.style.display = 'block';
+            statusDiv.innerHTML = \`
+                <strong>Form Completion Status:</strong> \${isCompleted ? '✅ COMPLETED' : '❌ NOT COMPLETED'}<br>
+                <strong>Cookie Value:</strong> \${status || 'null'}<br>
+                <strong>All Cookies:</strong> \${document.cookie || 'none'}
+            \`;
+            
+            console.log('📊 Current form completion status:', isCompleted ? '✅ Completed' : '❌ Not completed');
+            console.log('📊 Raw cookie value:', status);
+            
+            return isCompleted;
+        }
+
+        function simulateCompletion() {
+            console.log('🧪 Simulating form completion...');
+            setCookie('tally_form_completed', 'true');
+            console.log('✅ Simulated form completion - cookie set');
+            
+            setTimeout(() => {
+                console.log('🔄 Checking if cookie was set correctly...');
+                const verification = getCookie('tally_form_completed');
+                if (verification === 'true') {
+                    console.log('✅ Cookie verification successful!');
+                    alert('✅ Form completion simulated successfully!\\n\\nYou can now access the protected sessions page.');
+                } else {
+                    console.error('❌ Cookie verification failed!');
+                    alert('❌ Failed to set completion cookie. Please check browser settings.');
+                }
+            }, 500);
+        }
+
+        function clearCompletion() {
+            console.log('🧪 Clearing form completion...');
+            deleteCookie('tally_form_completed');
+            console.log('🔄 Form completion cleared - cookie deleted');
+            
+            setTimeout(() => {
+                console.log('🔄 Verifying cookie was deleted...');
+                const verification = getCookie('tally_form_completed');
+                if (!verification) {
+                    console.log('✅ Cookie deletion verified!');
+                    alert('🗑️ Form completion cleared successfully!\\n\\nProtected pages are now blocked.');
+                } else {
+                    console.error('❌ Cookie deletion failed!');
+                    alert('❌ Failed to clear completion cookie. Still has value: ' + verification);
+                }
+            }, 500);
+        }
+
+        function testDirectAccess() {
+            console.log('🧪 Testing direct access to protected route...');
+            const currentStatus = checkStatus();
+            
+            if (currentStatus) {
+                console.log('✅ User has completion status - access should be allowed');
+                alert('🔗 Testing direct access...\\n\\nYou should be able to access the sessions page.');
+            } else {
+                console.log('❌ User does not have completion status - access should be blocked');
+                alert('🚫 Testing direct access...\\n\\nYou should be redirected to the personality quiz.');
+            }
+            
+            setTimeout(() => {
+                window.location.href = '/introductory-sessions';
+            }, 1000);
+        }
+
+        function runFullTest() {
+            console.log('🧪 Starting full protection test sequence...');
+            
+            const resultsDiv = document.getElementById('test-results');
+            const contentDiv = document.getElementById('results-content');
+            resultsDiv.style.display = 'block';
+            contentDiv.innerHTML = '<p>Running tests...</p>';
+            
+            let testResults = [];
+            
+            // Step 1: Check initial status
+            console.log('1️⃣ Step 1: Checking initial status...');
+            const initialStatus = checkStatus();
+            testResults.push(\`Initial Status: \${initialStatus ? '✅ Completed' : '❌ Not Completed'}\`);
+            
+            setTimeout(() => {
+                // Step 2: Clear completion
+                console.log('2️⃣ Step 2: Clearing completion status...');
+                clearCompletion();
+                testResults.push('Cleared completion status');
+                
+                setTimeout(() => {
+                    // Step 3: Verify blocked access
+                    console.log('3️⃣ Step 3: Verifying blocked access...');
+                    const blockedStatus = checkStatus();
+                    testResults.push(\`After clearing: \${blockedStatus ? '❌ Still has access (BUG!)' : '✅ Access blocked correctly'}\`);
+                    
+                    setTimeout(() => {
+                        // Step 4: Set completion
+                        console.log('4️⃣ Step 4: Setting completion status...');
+                        simulateCompletion();
+                        testResults.push('Set completion status');
+                        
+                        setTimeout(() => {
+                            // Step 5: Verify allowed access
+                            console.log('5️⃣ Step 5: Verifying allowed access...');
+                            const allowedStatus = checkStatus();
+                            testResults.push(\`After setting: \${allowedStatus ? '✅ Access allowed correctly' : '❌ Access still blocked (BUG!)'}\`);
+                            
+                            // Display results
+                            contentDiv.innerHTML = testResults.map(result => \`<p>• \${result}</p>\`).join('');
+                            console.log('🏁 Full test sequence completed!');
+                            
+                        }, 1000);
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        }
+
+        // Initialize
+        console.log('🛡️ Protection System Test Console Loaded');
+        console.log('🔧 Available functions: checkStatus(), simulateCompletion(), clearCompletion(), testDirectAccess(), runFullTest()');
+        checkStatus();
+    </script>
+</body>
+</html>
